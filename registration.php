@@ -16,7 +16,7 @@ if (isset($_POST['form1'])) {
 
     if(empty($_POST['cust_name'])) {
         $valid = 0;
-        $error_message .= LANG_VALUE_123."<br>";
+        $error_message .= "Name is required"."<br>";
     }
 
     if(empty($_POST['cust_email'])) {
