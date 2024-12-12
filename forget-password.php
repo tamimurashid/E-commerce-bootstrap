@@ -1,6 +1,11 @@
 <?php require_once('header.php'); ?>
 
 <?php
+require 'vendor/autoload.php'; // Use Composer's autoloader
+include 'Email_config.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 $statement = $pdo->prepare("SELECT * FROM tbl_settings WHERE id=1");
 $statement->execute();
 $result = $statement->fetchAll(PDO::FETCH_ASSOC);                            
@@ -47,7 +52,7 @@ if(isset($_POST['form1'])) {
         $statement = $pdo->prepare("UPDATE tbl_customer SET cust_token=?,cust_timestamp=? WHERE cust_email=?");
         $statement->execute(array($token,$now,strip_tags($_POST['cust_email'])));
         
-        $message = '<p>'.LANG_VALUE_142.'<br> <a href="'.BASE_URL.'reset-password.php?email='.$_POST['cust_email'].'&token='.$token.'">Click here</a>';
+        $message = '<p>'.LANG_VALUE_142.'<br> <a href="'.'http://localhost:8888/E-commerce-bootstrap/reset-password.php?email='.$_POST['cust_email'].'&token='.$token.'">Click here</a>';
         
         $to      = $_POST['cust_email'];
         $subject = LANG_VALUE_143;
@@ -57,7 +62,41 @@ if(isset($_POST['form1'])) {
                    "MIME-Version: 1.0\r\n" . 
                    "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
-        mail($to, $subject, $message, $headers);
+
+
+        $mail = new PHPMailer(true);
+
+    try {
+        //$mail->SMTPDebug = 2; // Enable detailed debug output
+
+        $mail->isSMTP();                                            
+        $mail->Host       = 'smtp.gmail.com'; //Set the SMTP server to send                       
+        $mail->SMTPAuth   = true; //Enable SMTP authentication                               
+        $mail->Username   = $youremail;  // sender email or SMTP username             
+        $mail->Password   = $yourkey;  // sender password or key  or SMTP password                        
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption          
+        $mail->Port       = 465;      //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+                              
+
+        $mail->setFrom($to, $to);
+        $mail->addAddress($youremail); 
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;                               
+        $mail->Body = $message;
+
+        $mail->send();
+        // header('Location: email-succes.html');
+        // exit();
+        // return true; 
+        
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        // header('Location: contact.html');
+        // exit();
+    }
+        //mail($to, $subject, $message, $headers);
 
         $success_message = $forget_password_message;
     }

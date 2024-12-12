@@ -160,7 +160,7 @@ if (isset($_POST['form1'])) {
         $to = $_POST['cust_email'];
 
         $subject = LANG_VALUE_150;
-        $verify_link = BASE_URL.'verify.php?email='.$to.'&token='.$token;
+        $verify_link = 'http://localhost:8888/E-commerce-bootstrap/verify.php?email='.$to.'&token='.$token;
         $message = '
 '.LANG_VALUE_151.'<br><br>
 
@@ -196,14 +196,14 @@ if (isset($_POST['form1'])) {
         $mail->Body = $message;
 
         $mail->send();
-        header('Location: email-succes.html');
-        exit();
+        // header('Location: email-succes.html');
+        // exit();
         // return true; 
         
     } catch (Exception $e) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-        header('Location: contact.html');
-        exit();
+        // header('Location: contact.html');
+        // exit();
     }
         //mail($to, $subject, $message, $headers);
 
