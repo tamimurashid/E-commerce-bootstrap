@@ -1,4 +1,4 @@
-<?php require_once('header.php'); ?>
+<?php require 'header.php'; ?>
 
 <?php
 require 'vendor/autoload.php'; // Use Composer's autoloader

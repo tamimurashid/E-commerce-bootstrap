@@ -15,11 +15,17 @@ $success_message1 = '';
 $i=1;
 $statement = $pdo->prepare("SELECT * FROM tbl_language");
 $statement->execute();
-$result = $statement->fetchAll(PDO::FETCH_ASSOC);							
+$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
 foreach ($result as $row) {
-	define('LANG_VALUE_'.$i,$row['lang_value']);
-	$i++;
+    // echo 'Defining: LANG_VALUE_' . $i . ' with value: ' . $row['lang_value'] . PHP_EOL;
+    define('LANG_VALUE_' . $i, $row['lang_value']);
+    $i++;
 }
+// foreach ($result as $row) {
+// 	define('LANG_VALUE_'.$i,$row['lang_value']);
+// 	$i++;
+// }
 
 $statement = $pdo->prepare("SELECT * FROM tbl_settings WHERE id=1");
 $statement->execute();

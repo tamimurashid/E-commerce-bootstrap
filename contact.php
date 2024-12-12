@@ -1,6 +1,11 @@
 <?php require_once('header.php'); ?>
 
 <?php
+require 'vendor/autoload.php'; // Use Composer's autoloader
+include 'Email_config.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 $statement = $pdo->prepare("SELECT * FROM tbl_page WHERE id=1");
 $statement->execute();
 $result = $statement->fetchAll(PDO::FETCH_ASSOC);                            
@@ -125,8 +130,40 @@ if(isset($_POST['form_contact']))
                    "MIME-Version: 1.0\r\n" . 
                    "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
-        // Sending email to admin                  
-        mail($to_admin, $subject, $message, $headers); 
+        // Sending email to admin     
+           $mail = new PHPMailer(true);
+
+    try {
+        //$mail->SMTPDebug = 2; // Enable detailed debug output
+
+        $mail->isSMTP();                                            
+        $mail->Host       = 'smtp.gmail.com'; //Set the SMTP server to send                       
+        $mail->SMTPAuth   = true; //Enable SMTP authentication                               
+        $mail->Username   = $youremail;  // sender email or SMTP username             
+        $mail->Password   = $yourkey;  // sender password or key  or SMTP password                        
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption          
+        $mail->Port       = 465;      //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+                              
+
+        $mail->setFrom($to_admin, $to_admin);
+        $mail->addAddress($youremail); 
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;                               
+        $mail->Body = $message;
+
+        $mail->send();
+        // header('Location: email-succes.html');
+        // exit();
+        // return true; 
+        
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        // header('Location: contact.html');
+        // exit();
+    }             
+       // mail($to_admin, $subject, $message, $headers); 
         
         $success_message = $receive_email_thank_you_message;
 
