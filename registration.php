@@ -10,6 +10,11 @@ foreach ($result as $row) {
 ?>
 
 <?php
+require 'vendor/autoload.php'; // Use Composer's autoloader
+include 'Email_config.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 if (isset($_POST['form1'])) {
 
     $valid = 1;
@@ -168,7 +173,39 @@ if (isset($_POST['form1'])) {
                    "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
         // Sending Email
-        mail($to, $subject, $message, $headers);
+        $mail = new PHPMailer(true);
+
+    try {
+        //$mail->SMTPDebug = 2; // Enable detailed debug output
+
+        $mail->isSMTP();                                            
+        $mail->Host       = 'smtp.gmail.com'; //Set the SMTP server to send                       
+        $mail->SMTPAuth   = true; //Enable SMTP authentication                               
+        $mail->Username   = $youremail;  // sender email or SMTP username             
+        $mail->Password   = $yourkey;  // sender password or key  or SMTP password                        
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption          
+        $mail->Port       = 465;      //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+                              
+
+        $mail->setFrom($to, $to);
+        $mail->addAddress($youremail); 
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;                               
+        $mail->Body = $message;
+
+        $mail->send();
+        header('Location: email-succes.html');
+        exit();
+        // return true; 
+        
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        header('Location: contact.html');
+        exit();
+    }
+        //mail($to, $subject, $message, $headers);
 
         unset($_POST['cust_name']);
         unset($_POST['cust_cname']);
